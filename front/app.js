@@ -1,3 +1,59 @@
+// ==================== API 集成层 ====================
+let useBackend = false;
+let apiDataLoaded = false;
+
+async function loadAllData() {
+    if (apiDataLoaded) return;
+    try {
+        const plansRes = await apiListPlans(1, 100);
+        if (plansRes.data && plansRes.data.items) {
+            useBackend = true;
+            const plans = plansRes.data.items;
+            travelPlans = plans;
+
+            if (plans.length > 0) {
+                const firstPlan = plans[0];
+                currentPlanId = firstPlan.id;
+
+                const planRes = await apiGetPlan(firstPlan.id);
+                if (planRes.data) {
+                    const p = planRes.data;
+                    routeSpots = (p.routeSpots || []).map(s => ({ id: s.id, travelPlanId: firstPlan.id, name: s.name, order: s.displayOrder, distance: s.distanceKm, duration: s.durationMin }));
+                    scheduleItems = (p.scheduleItems || []).map(s => ({ id: s.id, travelPlanId: firstPlan.id, date: s.date.split('T')[0], startTime: s.startTime, endTime: s.endTime, title: s.title, description: s.description, type: s.type }));
+                    spotDetails = (p.spotDetails || []).map(s => ({ id: s.id, travelPlanId: firstPlan.id, name: s.name, description: s.description, image: s.imageUrl, hours: s.openHours, ticket: s.ticketPrice, contact: s.contact }));
+                    checkins = (p.checkins || []).map(c => ({ id: c.id, travelPlanId: firstPlan.id, location: c.location, date: c.date.split('T')[0], description: c.description, image: c.imageUrl }));
+                    foods = (p.foods || []).map(f => ({ id: f.id, travelPlanId: firstPlan.id, name: f.name, address: f.address, rating: f.rating, category: f.category, price: f.pricePerPerson, dishes: f.dishes, image: f.imageUrl, mapX: f.mapX || Math.random() * 70 + 10, mapY: f.mapY || Math.random() * 70 + 10 }));
+                    transports = (p.transports || []).map(t => ({ id: t.id, travelPlanId: firstPlan.id, type: t.type, from: t.from, to: t.to, time: t.time, cost: t.cost, note: t.note }));
+                    accommodations = (p.accommodations || []).map(a => ({ id: a.id, travelPlanId: firstPlan.id, name: a.name, address: a.address, checkIn: a.checkIn, checkOut: a.checkOut, price: a.price, note: a.note }));
+                    expenses = (p.expenses || []).map(e => ({ id: e.id, travelPlanId: firstPlan.id, category: e.category, amount: e.amount, date: e.date, note: e.note }));
+                    todos = (p.todos || []).map(t => ({ id: t.id, travelPlanId: firstPlan.id, text: t.text, completed: t.completed }));
+                }
+            }
+
+            const statsRes = await apiGetStats();
+            if (statsRes.data) {
+                document.getElementById('totalPlans').textContent = statsRes.data.total || 0;
+                document.getElementById('ongoingPlans').textContent = statsRes.data.ongoing || 0;
+                document.getElementById('completedPlans').textContent = statsRes.data.completed || 0;
+            }
+
+            apiDataLoaded = true;
+        }
+    } catch (err) {
+        console.log('后端API不可用，使用本地数据:', err.message);
+        useBackend = false;
+    }
+}
+
+async function syncToBackend() {
+    if (!useBackend || !currentPlanId) return;
+    try {
+        await apiGetPlan(currentPlanId);
+    } catch (err) {
+        console.error('同步数据失败:', err);
+    }
+}
+
 // ==================== 数据存储 ====================
 let travelPlans = [
     { id: 1, title: '大理洱海之旅', destination: '云南大理', startDate: '2025-08-15', endDate: '2025-08-22', budget: 5000, spent: 3200, status: 'ongoing', description: '环洱海骑行，探访白族村落，感受苍山洱海的壮美。', image: 'https://images.unsplash.com/photo-1571401835390-9a15d78d3410?w=800' },
@@ -72,7 +128,8 @@ let currentScheduleDate = '2025-08-15';
 let autoSaveTimer = null;
 
 // ==================== 初始化 ====================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadAllData();
     renderTravelPlans();
     updateStats();
     initResizer();
@@ -240,11 +297,24 @@ function addSpot() {
     const input = document.getElementById('spotSearchInput');
     const name = input.value.trim();
     if (!name) { showToast('请输入景点名称'); return; }
-    routeSpots.push({ id: nextId++, travelPlanId: currentPlanId, name, order: routeSpots.filter(s => s.travelPlanId === currentPlanId).length + 1, distance: Math.floor(Math.random() * 30) + 5, duration: Math.floor(Math.random() * 40) + 15 });
-    input.value = '';
-    renderRouteList();
-    showToast('景点已添加');
-    autoSave();
+    const spotData = { name, distanceKm: Math.floor(Math.random() * 30) + 5, durationMin: Math.floor(Math.random() * 40) + 15 };
+    if (useBackend && currentPlanId) {
+        apiAddRouteSpot(currentPlanId, spotData).then((res) => {
+            if (res.data) {
+                routeSpots.push({ id: res.data.id, travelPlanId: currentPlanId, name, order: res.data.displayOrder, distance: res.data.distanceKm, duration: res.data.durationMin });
+            }
+            input.value = '';
+            renderRouteList();
+            showToast('景点已添加');
+            autoSave();
+        });
+    } else {
+        routeSpots.push({ id: nextId++, travelPlanId: currentPlanId, name, order: routeSpots.filter(s => s.travelPlanId === currentPlanId).length + 1, distance: spotData.distanceKm, duration: spotData.durationMin });
+        input.value = '';
+        renderRouteList();
+        showToast('景点已添加');
+        autoSave();
+    }
 }
 
 function deleteSpot(id) {
@@ -252,6 +322,7 @@ function deleteSpot(id) {
     routeSpots = routeSpots.filter(s => s.id !== id);
     const planSpots = routeSpots.filter(s => s.travelPlanId === currentPlanId).sort((a, b) => a.order - b.order);
     planSpots.forEach((s, i) => s.order = i + 1);
+    if (useBackend) apiDeleteRouteSpot(id);
     renderRouteList();
     showToast('景点已删除');
     autoSave();
@@ -332,10 +403,22 @@ function addScheduleItem() {
     const types = ['sightseeing', 'food', 'other', 'other', 'other'];
     const idx = Math.floor(Math.random() * titles.length);
     const startHour = 8 + Math.floor(Math.random() * 8);
-    scheduleItems.push({ id: nextId++, travelPlanId: currentPlanId, date: currentScheduleDate, startTime: `${String(startHour).padStart(2, '0')}:00`, endTime: `${String(startHour + 2).padStart(2, '0')}:00`, title: titles[idx], description: '点击编辑详细信息', type: types[idx] });
-    renderScheduleList();
-    showToast('活动已添加');
-    autoSave();
+    const scheduleData = { date: currentScheduleDate, startTime: `${String(startHour).padStart(2, '0')}:00`, endTime: `${String(startHour + 2).padStart(2, '0')}:00`, title: titles[idx], description: '点击编辑详细信息', type: types[idx] };
+    if (useBackend && currentPlanId) {
+        apiAddSchedule(currentPlanId, scheduleData).then((res) => {
+            if (res.data) {
+                scheduleItems.push({ id: res.data.id, travelPlanId: currentPlanId, date: res.data.date.split('T')[0], startTime: res.data.startTime, endTime: res.data.endTime, title: res.data.title, description: res.data.description, type: res.data.type });
+            }
+            renderScheduleList();
+            showToast('活动已添加');
+            autoSave();
+        });
+    } else {
+        scheduleItems.push({ id: nextId++, travelPlanId: currentPlanId, ...scheduleData });
+        renderScheduleList();
+        showToast('活动已添加');
+        autoSave();
+    }
 }
 
 function editScheduleItem(id) {
@@ -348,6 +431,7 @@ function editScheduleItem(id) {
 function deleteScheduleItem(id) {
     if (!confirm('确定要删除这个活动吗？')) return;
     scheduleItems = scheduleItems.filter(s => s.id !== id);
+    if (useBackend) apiDeleteSchedule(id);
     renderScheduleList();
     showToast('活动已删除');
     autoSave();
@@ -504,10 +588,24 @@ function renderExpenseList() {
 }
 
 function addExpense() {
-    expenses.push({ id: nextId++, travelPlanId: currentPlanId, category: '其他', amount: 0, date: '2025-08-15', note: '点击编辑' });
-    renderExpenseList(); renderBudgetSummary(); showToast('费用记录已添加'); autoSave();
+    const expenseData = { category: '其他', amount: 0, date: '2025-08-15', note: '点击编辑' };
+    if (useBackend && currentPlanId) {
+        apiAddExpense(currentPlanId, expenseData).then((res) => {
+            if (res.data) {
+                expenses.push({ id: res.data.id, travelPlanId: currentPlanId, category: res.data.category, amount: res.data.amount, date: res.data.date, note: res.data.note });
+            }
+            renderExpenseList(); renderBudgetSummary(); showToast('费用记录已添加'); autoSave();
+        });
+    } else {
+        expenses.push({ id: nextId++, travelPlanId: currentPlanId, ...expenseData });
+        renderExpenseList(); renderBudgetSummary(); showToast('费用记录已添加'); autoSave();
+    }
 }
-function deleteExpense(id) { expenses = expenses.filter(e => e.id !== id); renderExpenseList(); renderBudgetSummary(); autoSave(); }
+function deleteExpense(id) {
+    expenses = expenses.filter(e => e.id !== id);
+    if (useBackend) apiDeleteExpense(id);
+    renderExpenseList(); renderBudgetSummary(); autoSave();
+}
 
 // ==================== 待办事项 ====================
 function renderTodoList() {
@@ -523,9 +621,9 @@ function renderTodoList() {
     `).join('');
 }
 
-function toggleTodo(id) { const todo = todos.find(t => t.id === id); if (todo) todo.completed = !todo.completed; renderTodoList(); autoSave(); }
-function addTodo() { const text = prompt('待办事项：'); if (!text) return; todos.push({ id: nextId++, travelPlanId: currentPlanId, text, completed: false }); renderTodoList(); showToast('待办事项已添加'); autoSave(); }
-function deleteTodo(id) { todos = todos.filter(t => t.id !== id); renderTodoList(); autoSave(); }
+function toggleTodo(id) { const todo = todos.find(t => t.id === id); if (todo) todo.completed = !todo.completed; if (useBackend) apiToggleTodo(id); renderTodoList(); autoSave(); }
+function addTodo() { const text = prompt('待办事项：'); if (!text) return; const todoData = { text, completed: false }; if (useBackend && currentPlanId) { apiAddTodo(currentPlanId, todoData).then((res) => { if (res.data) { todos.push({ id: res.data.id, travelPlanId: currentPlanId, text: res.data.text, completed: res.data.completed }); } renderTodoList(); showToast('待办事项已添加'); autoSave(); }); } else { todos.push({ id: nextId++, travelPlanId: currentPlanId, text, completed: false }); renderTodoList(); showToast('待办事项已添加'); autoSave(); } }
+function deleteTodo(id) { todos = todos.filter(t => t.id !== id); if (useBackend) apiDeleteTodo(id); renderTodoList(); autoSave(); }
 
 function loadTravelNotes() {
     const plan = travelPlans.find(p => p.id === currentPlanId);
@@ -558,8 +656,18 @@ function filterCheckins(filter, element) {
 
 function saveCheckin(event) {
     event.preventDefault();
-    checkins.unshift({ id: nextId++, travelPlanId: currentPlanId, location: document.getElementById('checkinLocation').value, date: document.getElementById('checkinDate').value, description: document.getElementById('checkinDescription').value, image: document.getElementById('checkinImage').value });
-    closeModal('checkin'); renderSidebarCheckins(); updateSidebarCounts(); showToast('打卡记录已添加！');
+    const checkinData = { location: document.getElementById('checkinLocation').value, date: document.getElementById('checkinDate').value, description: document.getElementById('checkinDescription').value, imageUrl: document.getElementById('checkinImage').value };
+    if (useBackend && currentPlanId) {
+        apiAddCheckin(currentPlanId, checkinData).then((res) => {
+            if (res.data) {
+                checkins.unshift({ id: res.data.id, travelPlanId: currentPlanId, location: res.data.location, date: res.data.date.split('T')[0], description: res.data.description, image: res.data.imageUrl });
+            }
+            closeModal('checkin'); renderSidebarCheckins(); updateSidebarCounts(); showToast('打卡记录已添加！');
+        });
+    } else {
+        checkins.unshift({ id: nextId++, travelPlanId: currentPlanId, location: checkinData.location, date: checkinData.date, description: checkinData.description, image: checkinData.imageUrl });
+        closeModal('checkin'); renderSidebarCheckins(); updateSidebarCounts(); showToast('打卡记录已添加！');
+    }
 }
 
 function viewCheckinDetail(id) {
@@ -605,8 +713,18 @@ function filterFoods(filter, element) {
 
 function saveFood(event) {
     event.preventDefault();
-    foods.unshift({ id: nextId++, travelPlanId: currentPlanId, name: document.getElementById('foodName').value, address: document.getElementById('foodAddress').value, rating: parseInt(document.getElementById('foodRating').value), category: document.getElementById('foodCategory').value, price: parseInt(document.getElementById('foodPrice').value) || 0, dishes: document.getElementById('foodDishes').value, image: document.getElementById('foodImage').value, mapX: Math.floor(Math.random() * 70) + 10, mapY: Math.floor(Math.random() * 70) + 10 });
-    closeModal('food'); renderSidebarFoods(); renderSidebarMap(); updateSidebarCounts(); showToast('美食收录已添加！');
+    const foodData = { name: document.getElementById('foodName').value, address: document.getElementById('foodAddress').value, rating: parseInt(document.getElementById('foodRating').value), category: document.getElementById('foodCategory').value, pricePerPerson: parseInt(document.getElementById('foodPrice').value) || 0, dishes: document.getElementById('foodDishes').value, imageUrl: document.getElementById('foodImage').value, mapX: Math.floor(Math.random() * 70) + 10, mapY: Math.floor(Math.random() * 70) + 10 };
+    if (useBackend && currentPlanId) {
+        apiAddFood(currentPlanId, foodData).then((res) => {
+            if (res.data) {
+                foods.unshift({ id: res.data.id, travelPlanId: currentPlanId, name: res.data.name, address: res.data.address, rating: res.data.rating, category: res.data.category, price: res.data.pricePerPerson, dishes: res.data.dishes, image: res.data.imageUrl, mapX: res.data.mapX, mapY: res.data.mapY });
+            }
+            closeModal('food'); renderSidebarFoods(); renderSidebarMap(); updateSidebarCounts(); showToast('美食收录已添加！');
+        });
+    } else {
+        foods.unshift({ id: nextId++, travelPlanId: currentPlanId, name: foodData.name, address: foodData.address, rating: foodData.rating, category: foodData.category, price: foodData.pricePerPerson, dishes: foodData.dishes, image: foodData.imageUrl, mapX: foodData.mapX, mapY: foodData.mapY });
+        closeModal('food'); renderSidebarFoods(); renderSidebarMap(); updateSidebarCounts(); showToast('美食收录已添加！');
+    }
 }
 
 function viewFoodDetail(id) {
@@ -646,8 +764,14 @@ function saveTravelPlan(event) {
     event.preventDefault();
     const editId = document.getElementById('travelEditId').value;
     const data = { title: document.getElementById('travelTitle').value, destination: document.getElementById('travelDestination').value, startDate: document.getElementById('travelStartDate').value, endDate: document.getElementById('travelEndDate').value, budget: parseInt(document.getElementById('travelBudget').value) || 0, status: document.getElementById('travelStatus').value, description: document.getElementById('travelDescription').value, image: document.getElementById('travelImage').value };
-    if (editId) { const index = travelPlans.findIndex(p => p.id === parseInt(editId)); if (index !== -1) travelPlans[index] = { ...travelPlans[index], ...data }; }
-    else { data.id = nextId++; data.spent = 0; travelPlans.unshift(data); }
+    if (editId) {
+        const index = travelPlans.findIndex(p => p.id === parseInt(editId));
+        if (index !== -1) travelPlans[index] = { ...travelPlans[index], ...data };
+        if (useBackend) apiUpdatePlan(parseInt(editId), data).then(() => loadAllData().then(() => { renderTravelPlans(); updateStats(); }));
+    } else {
+        data.id = nextId++; data.spent = 0; travelPlans.unshift(data);
+        if (useBackend) apiCreatePlan(data).then(() => loadAllData().then(() => { renderTravelPlans(); updateStats(); }));
+    }
     closeModal('travel');
     if (currentPlanId) { document.getElementById('editorTitle').textContent = data.title; document.getElementById('editorSubtitle').textContent = data.destination; }
     renderTravelPlans(); updateStats();
@@ -683,6 +807,7 @@ function deleteTravelPlan(id) {
     expenses = expenses.filter(e => e.travelPlanId !== id);
     todos = todos.filter(t => t.travelPlanId !== id);
     if (currentPlanId === id) goBack();
+    if (useBackend) apiDeletePlan(id).then(() => { renderTravelPlans(); updateStats(); });
     renderTravelPlans(); updateStats();
     showToast('旅行计划已删除');
 }
