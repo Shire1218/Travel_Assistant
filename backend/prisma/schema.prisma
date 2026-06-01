@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  openid    String    @unique
+  nickname  String?
+  avatarUrl String?
+  phone     String?   @unique
+  gender    Int       @default(0)
+  plans     TravelPlan[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model TravelPlan {
+  id             Int             @id @default(autoincrement())
+  userId         Int
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  destination    String
+  startDate      DateTime
+  endDate        DateTime
+  budget         Float           @default(0)
+  spent          Float           @default(0)
+  status         String          @default("planned")
+  description    String?
+  imageUrl       String?
+  notes          String?
+  routeSpots     RouteSpot[]
+  scheduleItems  ScheduleItem[]
+  spotDetails    SpotDetail[]
+  checkins       Checkin[]
+  foods          Food[]
+  transports     Transport[]
+  accommodations Accommodation[]
+  expenses       Expense[]
+  todos          Todo[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([userId, status])
+}
+
+model RouteSpot {
+  id           Int       @id @default(autoincrement())
+  planId       Int
+  plan         TravelPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  name         String
+  displayOrder Int
+  distanceKm   Float     @default(0)
+  durationMin  Int       @default(0)
+  createdAt    DateTime  @default(now())
+}
+
+model ScheduleItem {
+  id          Int       @id @default(autoincrement())
+  planId      Int
+  plan        TravelPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  date        DateTime
+  startTime   String
+  endTime     String
+  title       String
+  description String?
+  type        String    @default("other")
+  createdAt   DateTime  @default(now())
+
+  @@index([planId, date])
+}
+
+model SpotDetail {
+  id          Int       @id @default(autoincrement())
+  planId      Int
+  plan        TravelPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  imageUrl    String?
+  openHours   String?
+  ticketPrice String?
+  contact     String?
+  createdAt   DateTime  @default(now())
+}
+
+model Checkin {
+  id          Int       @id @default(autoincrement())
+  planId      Int
+  plan        TravelPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  location    String
+  date        DateTime
+  description String?
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+
+  @@index([planId, date])
+}
+
+model Food {
+  id             Int       @id @default(autoincrement())
+  planId         Int
+  plan           TravelPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  name           String
+  address        String
+  rating         Int
+  category       String?
+  pricePerPerson Float?
+  dishes         String?
+  imageUrl       String?
+  mapX           Float?
+  mapY           Float?
+  createdAt      DateTime  @default(now())
+
+  @@index([planId, category])
+}
+
+model Transport {
+  id        Int       @id @default(autoincrement())
+  planId    Int
+  plan      TravelPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  type      String
+  from      String
+  to        String
+  time      String
+  cost      Float     @default(0)
+  note      String?
+  createdAt DateTime  @default(now())
+}
+
+model Accommodation {
+  id        Int       @id @default(autoincrement())
+  planId    Int
+  plan      TravelPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  name      String
+  address   String
+  checkIn   String
+  checkOut  String
+  price     Float     @default(0)
+  note      String?
+  createdAt DateTime  @default(now())
+}
+
+model Expense {
+  id        Int       @id @default(autoincrement())
+  planId    Int
+  plan      TravelPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  category  String
+  amount    Float
+  date      String
+  note      String?
+  createdAt DateTime  @default(now())
+}
+
+model Todo {
+  id        Int       @id @default(autoincrement())
+  planId    Int
+  plan      TravelPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  text      String
+  completed Boolean   @default(false)
+  createdAt DateTime  @default(now())
+}

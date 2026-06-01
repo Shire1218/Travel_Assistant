@@ -1,0 +1,356 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Travel Assistant API",
+    "description": "智能旅游助手后端API接口文档",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Travel Assistant Team"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/v1",
+      "description": "开发环境"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "example": 0 },
+          "message": { "type": "string", "example": "操作成功" },
+          "data": { "type": "object" }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "openid": { "type": "string" },
+          "nickname": { "type": "string" },
+          "avatarUrl": { "type": "string" },
+          "phone": { "type": "string" },
+          "gender": { "type": "integer" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TravelPlan": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "userId": { "type": "integer" },
+          "title": { "type": "string" },
+          "destination": { "type": "string" },
+          "startDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "budget": { "type": "number" },
+          "spent": { "type": "number" },
+          "status": { "type": "string", "enum": ["planned", "ongoing", "completed"] },
+          "description": { "type": "string" },
+          "imageUrl": { "type": "string" },
+          "notes": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "RouteSpot": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "planId": { "type": "integer" },
+          "name": { "type": "string" },
+          "displayOrder": { "type": "integer" },
+          "distanceKm": { "type": "number" },
+          "durationMin": { "type": "integer" }
+        }
+      },
+      "ScheduleItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "planId": { "type": "integer" },
+          "date": { "type": "string", "format": "date" },
+          "startTime": { "type": "string" },
+          "endTime": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "type": { "type": "string" }
+        }
+      },
+      "SpotDetail": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "planId": { "type": "integer" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "imageUrl": { "type": "string" },
+          "openHours": { "type": "string" },
+          "ticketPrice": { "type": "string" },
+          "contact": { "type": "string" }
+        }
+      },
+      "Checkin": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "planId": { "type": "integer" },
+          "location": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "description": { "type": "string" },
+          "imageUrl": { "type": "string" }
+        }
+      },
+      "Food": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "planId": { "type": "integer" },
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "category": { "type": "string" },
+          "pricePerPerson": { "type": "number" },
+          "dishes": { "type": "string" },
+          "imageUrl": { "type": "string" },
+          "mapX": { "type": "number" },
+          "mapY": { "type": "number" }
+        }
+      },
+      "Transport": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "planId": { "type": "integer" },
+          "type": { "type": "string" },
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "time": { "type": "string" },
+          "cost": { "type": "number" },
+          "note": { "type": "string" }
+        }
+      },
+      "Accommodation": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "planId": { "type": "integer" },
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "checkIn": { "type": "string" },
+          "checkOut": { "type": "string" },
+          "price": { "type": "number" },
+          "note": { "type": "string" }
+        }
+      },
+      "Expense": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "planId": { "type": "integer" },
+          "category": { "type": "string" },
+          "amount": { "type": "number" },
+          "date": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      },
+      "Todo": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "planId": { "type": "integer" },
+          "text": { "type": "string" },
+          "completed": { "type": "boolean" }
+        }
+      }
+    }
+  },
+  "security": [{ "bearerAuth": [] }],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["认证"],
+        "summary": "用户注册",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["openid"],
+                "properties": {
+                  "openid": { "type": "string", "example": "wx_openid_12345" },
+                  "nickname": { "type": "string", "example": "旅行者" },
+                  "phone": { "type": "string", "example": "13800138000" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "注册成功" },
+          "409": { "description": "用户已存在" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["认证"],
+        "summary": "用户登录",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["openid"],
+                "properties": {
+                  "openid": { "type": "string", "example": "wx_openid_12345" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "登录成功，返回用户信息和Token" },
+          "400": { "description": "参数错误" }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["认证"],
+        "summary": "刷新Token",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Token刷新成功" },
+          "401": { "description": "Token无效或已过期" }
+        }
+      }
+    },
+    "/plans": {
+      "get": {
+        "tags": ["旅行计划"],
+        "summary": "获取旅行计划列表",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["planned", "ongoing", "completed"] } }
+        ],
+        "responses": {
+          "200": { "description": "返回分页的计划列表" }
+        }
+      },
+      "post": {
+        "tags": ["旅行计划"],
+        "summary": "创建旅行计划",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "destination", "startDate", "endDate"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "destination": { "type": "string" },
+                  "startDate": { "type": "string", "format": "date" },
+                  "endDate": { "type": "string", "format": "date" },
+                  "budget": { "type": "number" },
+                  "description": { "type": "string" },
+                  "imageUrl": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "创建成功" }
+        }
+      }
+    },
+    "/plans/{id}": {
+      "get": {
+        "tags": ["旅行计划"],
+        "summary": "获取计划详情",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "返回计划详情" } }
+      },
+      "put": {
+        "tags": ["旅行计划"],
+        "summary": "更新旅行计划",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "更新成功" } }
+      },
+      "delete": {
+        "tags": ["旅行计划"],
+        "summary": "删除旅行计划",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "删除成功" } }
+      }
+    },
+    "/plans/{id}/routes": {
+      "get": {
+        "tags": ["路线规划"],
+        "summary": "获取路线景点列表",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }]
+      },
+      "post": {
+        "tags": ["路线规划"],
+        "summary": "添加路线景点",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }]
+      }
+    },
+    "/plans/{id}/schedules": {
+      "get": {
+        "tags": ["时间安排"],
+        "summary": "获取日程列表",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } },
+          { "name": "date", "in": "query", "schema": { "type": "string", "format": "date" } }
+        ]
+      },
+      "post": {
+        "tags": ["时间安排"],
+        "summary": "添加日程",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }]
+      }
+    },
+    "/plans/{id}/spots": {
+      "get": { "tags": ["景点介绍"], "summary": "获取景点列表" },
+      "post": { "tags": ["景点介绍"], "summary": "添加景点" }
+    },
+    "/plans/{id}/checkins": {
+      "get": { "tags": ["打卡记录"], "summary": "获取打卡记录" },
+      "post": { "tags": ["打卡记录"], "summary": "添加打卡" }
+    },
+    "/plans/{id}/foods": {
+      "get": { "tags": ["美食收录"], "summary": "获取美食列表" },
+      "post": { "tags": ["美食收录"], "summary": "添加美食" }
+    },
+    "/plans/{id}/transports": {
+      "get": { "tags": ["交通"], "summary": "获取交通记录" },
+      "post": { "tags": ["交通"], "summary": "添加交通记录" }
+    },
+    "/plans/{id}/accommodations": {
+      "get": { "tags": ["住宿"], "summary": "获取住宿记录" },
+      "post": { "tags": ["住宿"], "summary": "添加住宿记录" }
+    },
+    "/plans/{id}/expenses": {
+      "get": { "tags": ["费用"], "summary": "获取费用列表" },
+      "post": { "tags": ["费用"], "summary": "添加费用记录" }
+    },
+    "/plans/{id}/todos": {
+      "get": { "tags": ["待办"], "summary": "获取待办列表" },
+      "post": { "tags": ["待办"], "summary": "添加待办" }
+    }
+  }
+}
