@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 8080;
 
 // 全局中间件
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: true,
   credentials: true,
 }));
 app.use(express.json());

@@ -59,6 +59,9 @@ async function request(url, options = {}) {
 
         return data;
     } catch (err) {
+        if (err instanceof TypeError && err.message === 'Failed to fetch') {
+            throw new Error('无法连接到后端服务，请确保后端已启动');
+        }
         console.error('API请求错误:', err);
         throw err;
     }

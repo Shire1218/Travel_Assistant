@@ -58,7 +58,7 @@
                             <h2 class="text-2xl font-bold text-gray-800">我的旅行计划</h2>
                             <p class="text-sm text-gray-500 mt-1">管理你的每一次旅行梦想</p>
                         </div>
-                        <button type="button" onclick="openModal('travel')" class="btn-primary flex items-center gap-2">
+                        <button onclick="openModal('travel')" class="btn-primary flex items-center gap-2">
                             <i class="fas fa-plus"></i>
                             <span>添加计划</span>
                         </button>
@@ -120,7 +120,7 @@
                     <div class="editor-panel" id="editorPanel">
                         <div class="editor-header">
                             <div class="flex items-center gap-3">
-                                <button type="button" onclick="goBack()" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                                <button onclick="goBack()" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
                                     <i class="fas fa-arrow-left text-gray-600 text-sm"></i>
                                 </button>
                                 <div>
@@ -130,15 +130,15 @@
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="text-xs text-gray-400" id="saveStatus"><i class="fas fa-check-circle mr-1"></i>已保存</span>
-                                <button type="button" onclick="openModal('travel')" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-save mr-1"></i>保存</button>
+                                <button onclick="openModal('travel')" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-save mr-1"></i>保存</button>
                             </div>
                         </div>
 
                         <!-- 编辑区 Tab 导航 -->
                         <div class="editor-tabs" id="editorTabs">
-                            <button type="button" class="editor-tab active" data-tab="route" onclick="switchEditorTab('route')"><i class="fas fa-route mr-1.5"></i>路线与日程</button>
-                            <button type="button" class="editor-tab" data-tab="spots" onclick="switchEditorTab('spots')"><i class="fas fa-map-marker-alt mr-1.5"></i>景点介绍</button>
-                            <button type="button" class="editor-tab" data-tab="details" onclick="switchEditorTab('details')"><i class="fas fa-info-circle mr-1.5"></i>详细信息</button>
+                            <button class="editor-tab active" data-tab="route" onclick="switchEditorTab('route')"><i class="fas fa-route mr-1.5"></i>路线与日程</button>
+                            <button class="editor-tab" data-tab="spots" onclick="switchEditorTab('spots')"><i class="fas fa-map-marker-alt mr-1.5"></i>景点介绍</button>
+                            <button class="editor-tab" data-tab="details" onclick="switchEditorTab('details')"><i class="fas fa-info-circle mr-1.5"></i>详细信息</button>
                         </div>
 
                         <!-- 编辑区内容 -->
@@ -151,12 +151,12 @@
                                         <div class="route-planner">
                                             <div class="route-header">
                                                 <h3 class="font-bold text-gray-800"><i class="fas fa-route mr-2 text-primary"></i>路线规划</h3>
-                                                <button type="button" onclick="addSpot()" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加景点</button>
+                                                <button onclick="addSpot()" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加景点</button>
                                             </div>
                                             <div class="route-input-area">
                                                 <div class="flex gap-2">
                                                     <input type="text" id="spotSearchInput" placeholder="搜索或输入景点名称..." class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" onkeydown="if(event.key==='Enter'){event.preventDefault(); addSpot();}">
-                                                    <button type="button" onclick="addSpot()" class="btn-primary text-sm">添加</button>
+                                                    <button onclick="addSpot()" class="btn-primary text-sm">添加</button>
                                                 </div>
                                             </div>
                                             <div class="route-list" id="routeList"></div>
@@ -169,12 +169,12 @@
                                         <div class="schedule-planner">
                                             <div class="schedule-header">
                                                 <h3 class="font-bold text-gray-800"><i class="fas fa-calendar-alt mr-2 text-secondary"></i>时间安排</h3>
-                                                <button type="button" onclick="openModal('schedule')" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加活动</button>
+                                                <button onclick="addScheduleItem()" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加活动</button>
                                             </div>
                                             <div class="schedule-date-nav">
-                                                <button type="button" onclick="changeScheduleDate(-1)" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200"><i class="fas fa-chevron-left text-gray-500 text-xs"></i></button>
+                                                <button onclick="changeScheduleDate(-1)" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200"><i class="fas fa-chevron-left text-gray-500 text-xs"></i></button>
                                                 <span class="text-sm font-semibold text-gray-700" id="scheduleDateLabel">2025年8月15日</span>
-                                                <button type="button" onclick="changeScheduleDate(1)" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200"><i class="fas fa-chevron-right text-gray-500 text-xs"></i></button>
+                                                <button onclick="changeScheduleDate(1)" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200"><i class="fas fa-chevron-right text-gray-500 text-xs"></i></button>
                                             </div>
                                             <div class="schedule-list" id="scheduleList"></div>
                                             <div class="conflict-warning hidden" id="conflictWarning"><i class="fas fa-exclamation-triangle mr-2"></i><span>检测到时间段冲突，请调整时间安排</span></div>
@@ -188,7 +188,7 @@
                                 <div class="spots-editor">
                                     <div class="spots-header">
                                         <h3 class="font-bold text-gray-800">景点介绍</h3>
-                                        <button type="button" onclick="addSpotDetail()" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加景点</button>
+                                        <button onclick="addSpotDetail()" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加景点</button>
                                     </div>
                                     <div class="spots-card-grid" id="spotsCardGrid">
                                         <!-- 景点卡片由JS动态生成 -->
@@ -202,21 +202,21 @@
                                     <div class="detail-section">
                                         <div class="detail-section-header">
                                             <h3 class="font-bold text-gray-800"><i class="fas fa-car mr-2 text-primary"></i>交通方式</h3>
-                                            <button type="button" onclick="openModal('transport')" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
+                                            <button onclick="addTransport()" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
                                         </div>
                                         <div class="detail-section-content"><div class="transport-list" id="transportList"></div></div>
                                     </div>
                                     <div class="detail-section">
                                         <div class="detail-section-header">
                                             <h3 class="font-bold text-gray-800"><i class="fas fa-hotel mr-2 text-secondary"></i>住宿信息</h3>
-                                            <button type="button" onclick="openModal('accommodation')" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
+                                            <button onclick="addAccommodation()" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
                                         </div>
                                         <div class="detail-section-content"><div class="accommodation-list" id="accommodationList"></div></div>
                                     </div>
                                     <div class="detail-section">
                                         <div class="detail-section-header">
                                             <h3 class="font-bold text-gray-800"><i class="fas fa-wallet mr-2 text-sunset"></i>预算管理</h3>
-                                            <button type="button" onclick="openModal('expense')" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加费用</button>
+                                            <button onclick="addExpense()" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加费用</button>
                                         </div>
                                         <div class="detail-section-content">
                                             <div class="budget-summary" id="budgetSummary"></div>
@@ -226,7 +226,7 @@
                                     <div class="detail-section">
                                         <div class="detail-section-header">
                                             <h3 class="font-bold text-gray-800"><i class="fas fa-sticky-note mr-2 text-forest"></i>笔记与待办</h3>
-                                            <button type="button" onclick="openModal('todo')" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
+                                            <button onclick="addTodo()" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
                                         </div>
                                         <div class="detail-section-content">
                                             <div class="todo-list" id="todoList"></div>
@@ -247,9 +247,9 @@
                     <!-- 右侧：侧边栏 -->
                     <div class="sidebar-panel" id="sidebarPanel">
                         <div class="sidebar-tabs">
-                            <button type="button" class="sidebar-tab active" data-tab="checkins" onclick="switchSidebarTab('checkins')"><i class="fas fa-map-pin"></i><span>打卡</span><span class="tab-badge" id="sidebarCheckinCount">0</span></button>
-                            <button type="button" class="sidebar-tab" data-tab="foods" onclick="switchSidebarTab('foods')"><i class="fas fa-utensils"></i><span>美食</span><span class="tab-badge" id="sidebarFoodCount">0</span></button>
-                            <button type="button" class="sidebar-tab" data-tab="map" onclick="switchSidebarTab('map')"><i class="fas fa-map"></i><span>地图</span></button>
+                            <button class="sidebar-tab active" data-tab="checkins" onclick="switchSidebarTab('checkins')"><i class="fas fa-map-pin"></i><span>打卡</span><span class="tab-badge" id="sidebarCheckinCount">0</span></button>
+                            <button class="sidebar-tab" data-tab="foods" onclick="switchSidebarTab('foods')"><i class="fas fa-utensils"></i><span>美食</span><span class="tab-badge" id="sidebarFoodCount">0</span></button>
+                            <button class="sidebar-tab" data-tab="map" onclick="switchSidebarTab('map')"><i class="fas fa-map"></i><span>地图</span></button>
                         </div>
                         <div class="sidebar-content">
                             <div class="sidebar-panel-content active" id="sidebarCheckins">
@@ -257,7 +257,7 @@
                                     <span class="filter-chip active" onclick="filterCheckins('all', this)">全部</span>
                                     <span class="filter-chip" onclick="filterCheckins('image', this)">有图</span>
                                 </div>
-                                <button type="button" onclick="openModal('checkin')" class="sidebar-add-btn"><i class="fas fa-plus mr-1"></i>添加打卡</button>
+                                <button onclick="openModal('checkin')" class="sidebar-add-btn"><i class="fas fa-plus mr-1"></i>添加打卡</button>
                                 <div class="checkin-timeline" id="sidebarCheckinTimeline"></div>
                             </div>
                             <div class="sidebar-panel-content" id="sidebarFoods">
@@ -267,7 +267,7 @@
                                     <span class="filter-chip" onclick="filterFoods('snack', this)">小吃</span>
                                     <span class="filter-chip" onclick="filterFoods('restaurant', this)">餐厅</span>
                                 </div>
-                                <button type="button" onclick="openModal('food')" class="sidebar-add-btn" style="background: linear-gradient(135deg, #F97316, #F59E0B);"><i class="fas fa-plus mr-1"></i>添加美食</button>
+                                <button onclick="openModal('food')" class="sidebar-add-btn" style="background: linear-gradient(135deg, #F97316, #F59E0B);"><i class="fas fa-plus mr-1"></i>添加美食</button>
                                 <div class="sidebar-food-list" id="sidebarFoodList"></div>
                             </div>
                             <div class="sidebar-panel-content" id="sidebarMap">
@@ -286,7 +286,7 @@
         <div class="modal-content">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-xl font-bold text-gray-800" id="travelModalTitle">添加旅行计划</h3>
-                <button type="button" onclick="closeModal('travel')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button>
+                <button onclick="closeModal('travel')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button>
             </div>
             <form id="travelForm" onsubmit="saveTravelPlan(event)">
                 <input type="hidden" id="travelEditId">
@@ -313,7 +313,7 @@
     <!-- 添加打卡记录弹窗 -->
     <div class="modal-overlay" id="checkinModal">
         <div class="modal-content">
-            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800">添加打卡记录</h3><button type="button" onclick="closeModal('checkin')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
+            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800">添加打卡记录</h3><button onclick="closeModal('checkin')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
             <form id="checkinForm" onsubmit="saveCheckin(event)">
                 <div class="space-y-4">
                     <div><label class="block text-sm font-medium text-gray-700 mb-1.5">打卡地点</label><input type="text" id="checkinLocation" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm" placeholder="例如：洱海"></div>
@@ -329,7 +329,7 @@
     <!-- 添加美食收录弹窗 -->
     <div class="modal-overlay" id="foodModal">
         <div class="modal-content">
-            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800">添加美食收录</h3><button type="button" onclick="closeModal('food')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
+            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800">添加美食收录</h3><button onclick="closeModal('food')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
             <form id="foodForm" onsubmit="saveFood(event)">
                 <div class="space-y-4">
                     <div><label class="block text-sm font-medium text-gray-700 mb-1.5">店铺名称</label><input type="text" id="foodName" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sunset/20 focus:border-sunset outline-none transition-all text-sm" placeholder="例如：过桥米线总店"></div>
@@ -350,7 +350,7 @@
     <!-- 景点编辑弹窗 -->
     <div class="modal-overlay" id="spotEditModal">
         <div class="modal-content">
-            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800" id="spotEditModalTitle">编辑景点</h3><button type="button" onclick="closeModal('spotEdit')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
+            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800" id="spotEditModalTitle">编辑景点</h3><button onclick="closeModal('spotEdit')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
             <form id="spotEditForm" onsubmit="saveSpotDetail(event)">
                 <input type="hidden" id="spotEditId">
                 <div class="space-y-4">
@@ -368,129 +368,14 @@
         </div>
     </div>
 
-    <!-- 添加日程活动弹窗 -->
-    <div class="modal-overlay" id="scheduleModal">
-        <div class="modal-content">
-            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800">添加日程活动</h3><button type="button" onclick="closeModal('schedule')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
-            <form id="scheduleForm" onsubmit="saveSchedule(event)">
-                <input type="hidden" id="scheduleEditId">
-                <div class="space-y-4">
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">活动标题</label><input type="text" id="scheduleTitle" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm" placeholder="例如：游览古城"></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">日期</label><input type="date" id="scheduleDate" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">类型</label><select id="scheduleType" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm"><option value="sightseeing">游览</option><option value="transport">交通</option><option value="food">美食</option><option value="activity">活动</option><option value="other">其他</option></select></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">开始时间</label><input type="time" id="scheduleStartTime" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">结束时间</label><input type="time" id="scheduleEndTime" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm"></div>
-                    </div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">描述</label><textarea id="scheduleDescription" rows="3" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm resize-none" placeholder="活动详细描述..."></textarea></div>
-                </div>
-                <div class="flex gap-3 mt-6"><button type="button" onclick="closeModal('schedule')" class="btn-secondary flex-1">取消</button><button type="submit" class="btn-primary flex-1" style="background:linear-gradient(135deg,#6366F1,#818CF8)">保存</button></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- 添加交通弹窗 -->
-    <div class="modal-overlay" id="transportModal">
-        <div class="modal-content">
-            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800">添加交通记录</h3><button type="button" onclick="closeModal('transport')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
-            <form id="transportForm" onsubmit="saveTransport(event)">
-                <input type="hidden" id="transportEditId">
-                <div class="space-y-4">
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">交通方式</label><select id="transportType" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm"><option value="高铁">高铁</option><option value="飞机">飞机</option><option value="租车">租车</option><option value="公交">公交</option><option value="其他">其他</option></select></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">出发地</label><input type="text" id="transportFrom" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="例如：昆明"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">目的地</label><input type="text" id="transportTo" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="例如：大理"></div>
-                    </div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">时间</label><input type="text" id="transportTime" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="例如：2025-08-15 08:30"></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">费用 (元)</label><input type="number" id="transportCost" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="145"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">备注</label><input type="text" id="transportNote" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="可选"></div>
-                    </div>
-                </div>
-                <div class="flex gap-3 mt-6"><button type="button" onclick="closeModal('transport')" class="btn-secondary flex-1">取消</button><button type="submit" class="btn-primary flex-1">保存</button></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- 添加住宿弹窗 -->
-    <div class="modal-overlay" id="accommodationModal">
-        <div class="modal-content">
-            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800">添加住宿记录</h3><button type="button" onclick="closeModal('accommodation')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
-            <form id="accommodationForm" onsubmit="saveAccommodation(event)">
-                <input type="hidden" id="accommodationEditId">
-                <div class="space-y-4">
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">住宿名称</label><input type="text" id="accommodationName" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm" placeholder="例如：大理洱海海景酒店"></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">地址</label><input type="text" id="accommodationAddress" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm" placeholder="例如：大理市洱海边"></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">入住日期</label><input type="date" id="accommodationCheckIn" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">退房日期</label><input type="date" id="accommodationCheckOut" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">价格 (元/晚)</label><input type="number" id="accommodationPrice" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm" placeholder="380"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">备注</label><input type="text" id="accommodationNote" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none text-sm" placeholder="可选"></div>
-                    </div>
-                </div>
-                <div class="flex gap-3 mt-6"><button type="button" onclick="closeModal('accommodation')" class="btn-secondary flex-1">取消</button><button type="submit" class="btn-primary flex-1" style="background:linear-gradient(135deg,#6366F1,#818CF8)">保存</button></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- 添加费用弹窗 -->
-    <div class="modal-overlay" id="expenseModal">
-        <div class="modal-content">
-            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800">添加费用记录</h3><button type="button" onclick="closeModal('expense')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
-            <form id="expenseForm" onsubmit="saveExpense(event)">
-                <input type="hidden" id="expenseEditId">
-                <div class="space-y-4">
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">费用分类</label><select id="expenseCategory" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sunset/20 focus:border-sunset outline-none text-sm"><option value="交通">交通</option><option value="住宿">住宿</option><option value="餐饮">餐饮</option><option value="门票">门票</option><option value="其他">其他</option></select></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">金额 (元)</label><input type="number" id="expenseAmount" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sunset/20 focus:border-sunset outline-none text-sm" placeholder="100"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">日期</label><input type="date" id="expenseDate" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sunset/20 focus:border-sunset outline-none text-sm"></div>
-                    </div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">备注</label><input type="text" id="expenseNote" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sunset/20 focus:border-sunset outline-none text-sm" placeholder="可选"></div>
-                </div>
-                <div class="flex gap-3 mt-6"><button type="button" onclick="closeModal('expense')" class="btn-secondary flex-1">取消</button><button type="submit" class="btn-primary flex-1" style="background:linear-gradient(135deg,#F97316,#F59E0B)">保存</button></div>
-            </form>
-        </div>
-    </div>
-
-    <!-- 添加待办弹窗 -->
-    <div class="modal-overlay" id="todoModal">
-        <div class="modal-content">
-            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800">添加待办事项</h3><button type="button" onclick="closeModal('todo')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
-            <form id="todoForm" onsubmit="saveTodo(event)">
-                <input type="hidden" id="todoEditId">
-                <div class="space-y-4">
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">待办内容</label><textarea id="todoText" required rows="4" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest/20 focus:border-forest outline-none text-sm resize-none" placeholder="例如：预订返程车票"></textarea></div>
-                </div>
-                <div class="flex gap-3 mt-6"><button type="button" onclick="closeModal('todo')" class="btn-secondary flex-1">取消</button><button type="submit" class="btn-primary flex-1" style="background:linear-gradient(135deg,#10B981,#34D399)">保存</button></div>
-            </form>
-        </div>
-    </div>
-
     <!-- 详情弹窗 -->
     <div class="modal-overlay" id="detailModal">
         <div class="modal-content">
-            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800" id="detailModalTitle">详情</h3><button type="button" onclick="closeModal('detail')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
+            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-800" id="detailModalTitle">详情</h3><button onclick="closeModal('detail')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button></div>
             <div id="detailContent"></div>
         </div>
     </div>
 
-    <script src="api/config.js"></script>
-    <script src="api/auth.js"></script>
-    <script src="api/user.js"></script>
-    <script src="api/plans.js"></script>
-    <script src="api/routes.js"></script>
-    <script src="api/schedules.js"></script>
-    <script src="api/spots.js"></script>
-    <script src="api/checkins.js"></script>
-    <script src="api/foods.js"></script>
-    <script src="api/transports.js"></script>
-    <script src="api/accommodations.js"></script>
-    <script src="api/expenses.js"></script>
-    <script src="api/todos.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
