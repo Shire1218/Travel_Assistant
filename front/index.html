@@ -43,7 +43,10 @@
                     <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
                         <i class="fas fa-bell text-sm"></i>
                     </div>
-                    <div class="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-xs font-bold cursor-pointer" id="userAvatar">T</div>
+                    <div class="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-xs font-bold cursor-pointer" id="userAvatar" onclick="showProfilePage()">T</div>
+                    <button type="button" onclick="showProfilePage()" class="px-3 py-1.5 text-xs font-medium bg-white/20 hover:bg-white/30 rounded-lg transition-colors" title="个人信息">
+                        <i class="fas fa-user"></i>
+                    </button>
                     <button type="button" onclick="handleLogout()" class="px-3 py-1.5 text-xs font-medium bg-white/20 hover:bg-white/30 rounded-lg transition-colors" title="退出登录">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
@@ -282,7 +285,101 @@
                 </div>
             </div>
         </div>
-    </div>
+
+            <!-- 个人信息页面 -->
+            <div id="profilePage" class="page-view hidden">
+                <main class="center-panel">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="goBackToMain()" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                                <i class="fas fa-arrow-left text-gray-600 text-sm"></i>
+                            </button>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-800">个人信息</h2>
+                                <p class="text-sm text-gray-500 mt-1">查看和管理你的个人资料</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="max-w-2xl mx-auto">
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                            <div class="flex items-center gap-6 mb-8 pb-8 border-b border-gray-100">
+                                <div class="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-2xl font-bold text-white" id="profileAvatar">T</div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800" id="profileNickname">加载中...</h3>
+                                    <p class="text-sm text-gray-500 mt-1" id="profileUsername">@loading</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="p-4 bg-gray-50 rounded-xl">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-user text-primary text-sm"></i>
+                                            </div>
+                                            <span class="text-sm text-gray-500">账号</span>
+                                        </div>
+                                        <p class="text-base font-semibold text-gray-800" id="profileAccount">-</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-xl">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-user-circle text-forest text-sm"></i>
+                                            </div>
+                                            <span class="text-sm text-gray-500">昵称</span>
+                                        </div>
+                                        <p class="text-base font-semibold text-gray-800" id="profileDisplayName">-</p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="p-4 bg-gray-50 rounded-xl">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-envelope text-secondary text-sm"></i>
+                                            </div>
+                                            <span class="text-sm text-gray-500">邮箱</span>
+                                        </div>
+                                        <p class="text-base font-semibold text-gray-800" id="profileEmail">未设置</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-xl">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-phone text-sunset text-sm"></i>
+                                            </div>
+                                            <span class="text-sm text-gray-500">手机号</span>
+                                        </div>
+                                        <p class="text-base font-semibold text-gray-800" id="profilePhone">未设置</p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="p-4 bg-gray-50 rounded-xl">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-venus-mars text-accent text-sm"></i>
+                                            </div>
+                                            <span class="text-sm text-gray-500">性别</span>
+                                        </div>
+                                        <p class="text-base font-semibold text-gray-800" id="profileGender">未设置</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-xl">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-calendar-alt text-coral text-sm"></i>
+                                            </div>
+                                            <span class="text-sm text-gray-500">注册时间</span>
+                                        </div>
+                                        <p class="text-base font-semibold text-gray-800" id="profileCreatedAt">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
 
     <!-- 添加/编辑旅行计划弹窗 -->
     <div class="modal-overlay" id="travelModal">

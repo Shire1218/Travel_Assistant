@@ -1224,3 +1224,50 @@ function handleLogout() {
         window.location.href = 'landing.html';
     }, 500);
 }
+
+// ==================== 个人信息页面 ====================
+function showProfilePage() {
+    document.getElementById('mainPage').classList.add('hidden');
+    document.getElementById('editorPage').classList.add('hidden');
+    document.getElementById('profilePage').classList.remove('hidden');
+    loadProfile();
+}
+
+function goBackToMain() {
+    document.getElementById('profilePage').classList.add('hidden');
+    document.getElementById('mainPage').classList.remove('hidden');
+}
+
+async function loadProfile() {
+    try {
+        const res = await apiGetMe();
+        if (res.data) {
+            const user = res.data;
+            const firstChar = (user.nickname || user.username || '?').charAt(0).toUpperCase();
+
+            document.getElementById('profileAvatar').textContent = firstChar;
+            document.getElementById('profileNickname').textContent = user.nickname || '-';
+            document.getElementById('profileUsername').textContent = '@' + (user.username || '');
+            document.getElementById('profileAccount').textContent = user.username || '-';
+            document.getElementById('profileDisplayName').textContent = user.nickname || '-';
+            document.getElementById('profileEmail').textContent = user.email || '未设置';
+            document.getElementById('profilePhone').textContent = user.phone || '未设置';
+
+            const genderMap = { 0: '未设置', 1: '男', 2: '女' };
+            document.getElementById('profileGender').textContent = genderMap[user.gender] || '未设置';
+
+            if (user.createdAt) {
+                const date = new Date(user.createdAt);
+                document.getElementById('profileCreatedAt').textContent = date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+            } else {
+                document.getElementById('profileCreatedAt').textContent = '-';
+            }
+
+            const avatar = document.getElementById('userAvatar');
+            avatar.textContent = firstChar;
+        }
+    } catch (err) {
+        console.error('加载个人信息失败:', err);
+        showToast('加载个人信息失败');
+    }
+}

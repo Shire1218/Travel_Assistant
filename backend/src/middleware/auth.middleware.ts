@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'travel-assistant-secret-key-dev';
 export interface AuthRequest extends Request {
   user?: {
     id: number;
-    openid: string;
+    username: string;
   };
 }
 
@@ -20,7 +20,7 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
 
   const token = authHeader.substring(7);
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: number; openid: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: number; username: string };
     req.user = decoded;
     next();
   } catch {
@@ -28,10 +28,10 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
   }
 }
 
-export function generateToken(user: { id: number; openid: string }): string {
+export function generateToken(user: { id: number; username: string }): string {
   const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
   return jwt.sign(
-    { id: user.id, openid: user.openid },
+    { id: user.id, username: user.username },
     JWT_SECRET,
     { expiresIn } as SignOptions
   );

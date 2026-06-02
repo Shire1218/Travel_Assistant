@@ -6,13 +6,16 @@ import { generateToken } from '../middleware/auth.middleware';
 import { z } from 'zod';
 
 const registerSchema = z.object({
-  openid: z.string().min(1).max(64),
+  username: z.string().min(3).max(50),
+  email: z.string().email().max(100).optional(),
+  password: z.string().min(6).max(50),
   nickname: z.string().max(100).optional(),
   phone: z.string().max(20).optional(),
 });
 
 const loginSchema = z.object({
-  openid: z.string().min(1).max(64),
+  username: z.string().min(1).max(50),
+  password: z.string().min(1).max(50),
 });
 
 export async function register(req: Request, res: Response): Promise<void> {
@@ -22,24 +25,36 @@ export async function register(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const { openid, nickname, phone } = result.data;
+  const { username, email, password, nickname, phone } = result.data;
 
   try {
-    const existing = await prisma.user.findUnique({ where: { openid } });
-    if (existing) {
-      error(res, '用户已存在', 409);
+    const existingByUsername = await prisma.user.findUnique({ where: { username } });
+    if (existingByUsername) {
+      error(res, '用户名已存在', 409);
       return;
     }
 
+    if (email) {
+      const existingByEmail = await prisma.user.findUnique({ where: { email } });
+      if (existingByEmail) {
+        error(res, '邮箱已被注册', 409);
+        return;
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await prisma.user.create({
       data: {
-        openid,
-        nickname: nickname || `用户_${openid.substring(0, 6)}`,
+        username,
+        email,
+        password: hashedPassword,
+        nickname: nickname || username,
         phone,
       },
     });
 
-    const token = generateToken({ id: user.id, openid: user.openid });
+    const token = generateToken({ id: user.id, username: user.username! });
 
     success(res, { user, token }, '注册成功', 201);
   } catch (err: any) {
@@ -54,21 +69,28 @@ export async function login(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const { openid } = result.data;
+  const { username, password } = result.data;
 
   try {
-    let user = await prisma.user.findUnique({ where: { openid } });
+    const user = await prisma.user.findUnique({ where: { username } });
 
     if (!user) {
-      user = await prisma.user.create({
-        data: {
-          openid,
-          nickname: `用户_${openid.substring(0, 6)}`,
-        },
-      });
+      error(res, '用户名或密码错误', 401);
+      return;
     }
 
-    const token = generateToken({ id: user.id, openid: user.openid });
+    if (!user.password) {
+      error(res, '该账号未设置密码，请先注册', 401);
+      return;
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      error(res, '用户名或密码错误', 401);
+      return;
+    }
+
+    const token = generateToken({ id: user.id, username: user.username! });
 
     success(res, { user, token }, '登录成功');
   } catch (err: any) {
@@ -88,8 +110,8 @@ export async function refreshToken(req: Request, res: Response): Promise<void> {
     const jwt = require('jsonwebtoken');
     const JWT_SECRET = process.env.JWT_SECRET || 'travel-assistant-secret-key-dev';
 
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: number; openid: string };
-    const newToken = generateToken({ id: decoded.id, openid: decoded.openid });
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: number; username: string };
+    const newToken = generateToken({ id: decoded.id, username: decoded.username });
 
     success(res, { token: newToken }, 'Token刷新成功');
   } catch {

@@ -7,7 +7,7 @@ export async function getMe(req: AuthRequest, res: Response): Promise<void> {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.id },
-      select: { id: true, openid: true, nickname: true, avatarUrl: true, phone: true, gender: true, createdAt: true },
+      select: { id: true, openid: true, username: true, email: true, nickname: true, avatarUrl: true, phone: true, gender: true, createdAt: true },
     });
     if (!user) { error(res, '用户不存在', 404); return; }
     success(res, user);

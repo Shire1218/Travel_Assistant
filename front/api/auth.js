@@ -1,16 +1,14 @@
-async function apiRegister(nickname, phone) {
-    const openid = 'wx_' + (phone || 'user_' + Date.now());
+async function apiRegister(username, password, nickname, phone, email) {
     return request('/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ openid, nickname, phone }),
+        body: JSON.stringify({ username, password, nickname, phone, email }),
     });
 }
 
-async function apiLogin(phone) {
-    const openid = 'wx_' + (phone || 'user_' + Date.now());
+async function apiLogin(username, password) {
     const res = await request('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ openid }),
+        body: JSON.stringify({ username, password }),
     });
     if (res.data) {
         setToken(res.data.token);
@@ -26,27 +24,11 @@ async function apiAutoLogin() {
             await apiGetMe();
             return { user, token: getToken() };
         } catch (e) {
-            console.log('Token已过期，重新登录');
+            console.log('Token已过期，需要重新登录');
             clearAuth();
         }
     }
-    try {
-        const openid = 'web_' + (localStorage.getItem('userId') || Date.now().toString());
-        localStorage.setItem('userId', openid.replace('web_', ''));
-        const res = await request('/auth/login', {
-            method: 'POST',
-            body: JSON.stringify({ openid }),
-        });
-        if (res.data) {
-            setToken(res.data.token);
-            setUser(res.data.user);
-            return res.data;
-        }
-        throw new Error('登录失败：未返回数据');
-    } catch (e) {
-        console.error('自动登录失败:', e);
-        throw e;
-    }
+    throw new Error('未登录');
 }
 
 async function apiRefreshToken() {
