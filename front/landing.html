@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Assistant - 智能旅行助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0EA5E9',
+                        secondary: '#6366F1',
+                        accent: '#F59E0B',
+                        ocean: '#06B6D4',
+                        sunset: '#F97316',
+                        forest: '#10B981',
+                        sand: '#FEF3C7',
+                        coral: '#F43F5E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .hero-gradient { background: linear-gradient(135deg, #0EA5E9 0%, #6366F1 50%, #06B6D4 100%); }
+        .glass-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .feature-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+        .input-focus:focus { ring: 2px; ring-color: #0EA5E9; border-color: #0EA5E9; outline: none; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="hero-gradient text-white px-6 py-4 shadow-lg">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                    <i class="fas fa-globe-asia text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold">Travel Assistant</h1>
+                    <p class="text-xs text-white/80">智能旅行助手</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="showLogin()" class="px-4 py-2 text-sm font-medium bg-white/20 hover:bg-white/30 rounded-lg transition-colors">登录</button>
+                <button type="button" onclick="showRegister()" class="px-4 py-2 text-sm font-medium bg-white text-primary rounded-lg hover:bg-white/90 transition-colors">免费注册</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div id="landingContent">
+        <!-- Hero 区域 -->
+        <section class="hero-gradient text-white py-20 px-6">
+            <div class="max-w-6xl mx-auto text-center">
+                <div class="animate-fade-in-up">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4">让旅行规划变得简单</h2>
+                    <p class="text-lg text-white/90 mb-8 max-w-2xl mx-auto">Travel Assistant 帮助您轻松规划行程、记录旅行点滴、发现美食景点，让每一次旅行都充满美好回忆。</p>
+                    <div class="flex items-center justify-center gap-4">
+                        <button type="button" onclick="showRegister()" class="px-8 py-3 text-base font-medium bg-white text-primary rounded-xl hover:bg-white/90 transition-all shadow-lg hover:shadow-xl">
+                            <i class="fas fa-rocket mr-2"></i>立即开始
+                        </button>
+                        <button type="button" onclick="showLogin()" class="px-8 py-3 text-base font-medium bg-white/20 text-white rounded-xl hover:bg-white/30 transition-all">
+                            <i class="fas fa-sign-in-alt mr-2"></i>已有账号
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心功能 -->
+        <section class="py-16 px-6 bg-white">
+            <div class="max-w-6xl mx-auto">
+                <h3 class="text-3xl font-bold text-gray-800 text-center mb-4">核心功能</h3>
+                <p class="text-gray-500 text-center mb-12">一站式旅行管理，让您的旅行更加精彩</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="feature-icon bg-blue-100 text-primary mb-4"><i class="fas fa-route text-xl"></i></div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">行程规划</h4>
+                        <p class="text-sm text-gray-600">轻松规划旅行路线，安排每日行程，智能冲突检测，让行程井井有条。</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="feature-icon bg-green-100 text-forest mb-4"><i class="fas fa-map-pin text-xl"></i></div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">打卡记录</h4>
+                        <p class="text-sm text-gray-600">记录旅行中的每一个美好瞬间，支持图片上传，生成旅行时间轴。</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="feature-icon bg-orange-100 text-sunset mb-4"><i class="fas fa-utensils text-xl"></i></div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">美食收录</h4>
+                        <p class="text-sm text-gray-600">发现并记录旅行中的美食，分类管理，评分推荐，不错过任何美味。</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="feature-icon bg-indigo-100 text-secondary mb-4"><i class="fas fa-hotel text-xl"></i></div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">住宿管理</h4>
+                        <p class="text-sm text-gray-600">管理住宿信息，记录入住退房时间，预算一目了然。</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="feature-icon bg-yellow-100 text-accent mb-4"><i class="fas fa-wallet text-xl"></i></div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">预算管理</h4>
+                        <p class="text-sm text-gray-600">实时跟踪旅行花费，分类统计，预算提醒，让消费尽在掌控。</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="feature-icon bg-red-100 text-coral mb-4"><i class="fas fa-sticky-note text-xl"></i></div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">待办事项</h4>
+                        <p class="text-sm text-gray-600">旅行前准备清单，行程中待办提醒，重要事项不再遗漏。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 应用场景 -->
+        <section class="py-16 px-6 bg-gray-50">
+            <div class="max-w-6xl mx-auto">
+                <h3 class="text-3xl font-bold text-gray-800 text-center mb-4">适用场景</h3>
+                <p class="text-gray-500 text-center mb-12">无论什么类型的旅行，都能帮您轻松应对</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="text-center p-6">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-plane text-primary text-2xl"></i></div>
+                        <h4 class="font-bold text-gray-800 mb-2">自由行</h4>
+                        <p class="text-sm text-gray-600">自主规划行程，灵活安排每一天</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-users text-forest text-2xl"></i></div>
+                        <h4 class="font-bold text-gray-800 mb-2">团队旅行</h4>
+                        <p class="text-sm text-gray-600">多人协作规划，共享行程信息</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-heart text-sunset text-2xl"></i></div>
+                        <h4 class="font-bold text-gray-800 mb-2">蜜月旅行</h4>
+                        <p class="text-sm text-gray-600">浪漫行程规划，记录美好时光</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-briefcase text-secondary text-2xl"></i></div>
+                        <h4 class="font-bold text-gray-800 mb-2">商务出差</h4>
+                        <p class="text-sm text-gray-600">高效安排行程，管理差旅费用</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 系统优势 -->
+        <section class="py-16 px-6 bg-white">
+            <div class="max-w-4xl mx-auto">
+                <h3 class="text-3xl font-bold text-gray-800 text-center mb-4">为什么选择我们</h3>
+                <div class="space-y-4 mt-8">
+                    <div class="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
+                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-mobile-alt text-primary"></i></div>
+                        <div><h4 class="font-bold text-gray-800 mb-1">多端同步</h4><p class="text-sm text-gray-600">Web端和小程序端数据实时同步，随时随地管理您的旅行计划。</p></div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
+                        <div class="w-10 h-10 bg-forest/10 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-shield-alt text-forest"></i></div>
+                        <div><h4 class="font-bold text-gray-800 mb-1">数据安全</h4><p class="text-sm text-gray-600">采用JWT认证机制，您的数据安全可靠，隐私得到充分保护。</p></div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
+                        <div class="w-10 h-10 bg-sunset/10 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-paint-brush text-sunset"></i></div>
+                        <div><h4 class="font-bold text-gray-800 mb-1">精美界面</h4><p class="text-sm text-gray-600">精心设计的用户界面，流畅的交互体验，让旅行规划成为一种享受。</p></div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
+                        <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-bolt text-secondary"></i></div>
+                        <div><h4 class="font-bold text-gray-800 mb-1">快速高效</h4><p class="text-sm text-gray-600">简洁的操作流程，快速的数据加载，让您的时间花在旅行上而不是操作上。</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA 区域 -->
+        <section class="py-20 px-6 hero-gradient text-white text-center">
+            <div class="max-w-2xl mx-auto">
+                <h3 class="text-3xl font-bold mb-4">开始您的旅行规划之旅</h3>
+                <p class="text-lg text-white/90 mb-8">免费注册，立即体验完整的旅行管理功能</p>
+                <button type="button" onclick="showRegister()" class="px-10 py-4 text-lg font-medium bg-white text-primary rounded-xl hover:bg-white/90 transition-all shadow-lg hover:shadow-xl">
+                    <i class="fas fa-user-plus mr-2"></i>免费注册
+                </button>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="py-8 px-6 bg-gray-800 text-white/60 text-center text-sm">
+            <p>&copy; 2025 Travel Assistant. 智能旅行助手，让旅行更简单。</p>
+        </footer>
+    </div>
+
+    <!-- 登录/注册弹窗 -->
+    <div class="modal-overlay hidden" id="authModal">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onclick="closeAuthModal(event)">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-up" onclick="event.stopPropagation()">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-800" id="authModalTitle">登录</h3>
+                        <button type="button" onclick="closeAuthModal()" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fas fa-times text-gray-500"></i></button>
+                    </div>
+
+                    <!-- 登录表单 -->
+                    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">手机号</label>
+                            <div class="relative">
+                                <i class="fas fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="tel" id="loginPhone" required pattern="^1[3-9]\d{9}$" class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="请输入手机号">
+                            </div>
+                            <p class="text-xs text-coral mt-1 hidden" id="loginPhoneError">请输入正确的手机号</p>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="rememberMe" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                <span class="text-sm text-gray-600">记住我</span>
+                            </label>
+                            <a href="#" class="text-sm text-primary hover:underline">忘记密码？</a>
+                        </div>
+                        <div id="loginError" class="hidden p-3 bg-red-50 text-coral text-sm rounded-xl"></div>
+                        <button type="submit" id="loginBtn" class="w-full py-3 text-white bg-primary rounded-xl hover:bg-primary/90 transition-colors font-medium">
+                            <i class="fas fa-sign-in-alt mr-2"></i>登录
+                        </button>
+                    </form>
+
+                    <!-- 注册表单 -->
+                    <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">昵称</label>
+                            <div class="relative">
+                                <i class="fas fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="registerNickname" required class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="请输入昵称">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">手机号</label>
+                            <div class="relative">
+                                <i class="fas fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="tel" id="registerPhone" required pattern="^1[3-9]\d{9}$" class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="请输入手机号">
+                            </div>
+                            <p class="text-xs text-coral mt-1 hidden" id="registerPhoneError">请输入正确的手机号</p>
+                        </div>
+                        <div id="registerError" class="hidden p-3 bg-red-50 text-coral text-sm rounded-xl"></div>
+                        <button type="submit" id="registerBtn" class="w-full py-3 text-white bg-primary rounded-xl hover:bg-primary/90 transition-colors font-medium">
+                            <i class="fas fa-user-plus mr-2"></i>注册
+                        </button>
+                    </form>
+
+                    <div class="mt-4 text-center text-sm text-gray-500">
+                        <span id="authSwitchText">还没有账号？</span>
+                        <button type="button" onclick="toggleAuthMode()" class="text-primary hover:underline font-medium" id="authSwitchBtn">立即注册</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="api/config.js"></script>
+    <script src="api/auth.js"></script>
+    <script src="api/user.js"></script>
+    <script>
+        let isLoginMode = true;
+
+        function showLogin() {
+            isLoginMode = true;
+            updateAuthUI();
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function showRegister() {
+            isLoginMode = false;
+            updateAuthUI();
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function closeAuthModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+            document.getElementById('registerForm').reset();
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('registerError').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            updateAuthUI();
+        }
+
+        function updateAuthUI() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const title = document.getElementById('authModalTitle');
+            const switchText = document.getElementById('authSwitchText');
+            const switchBtn = document.getElementById('authSwitchBtn');
+
+            if (isLoginMode) {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                title.textContent = '登录';
+                switchText.textContent = '还没有账号？';
+                switchBtn.textContent = '立即注册';
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                title.textContent = '注册';
+                switchText.textContent = '已有账号？';
+                switchBtn.textContent = '立即登录';
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const phone = document.getElementById('loginPhone').value.trim();
+            const phoneError = document.getElementById('loginPhoneError');
+            const loginError = document.getElementById('loginError');
+            const loginBtn = document.getElementById('loginBtn');
+
+            // 验证手机号
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                phoneError.classList.remove('hidden');
+                return;
+            }
+            phoneError.classList.add('hidden');
+            loginError.classList.add('hidden');
+
+            // 显示加载状态
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>登录中...';
+
+            try {
+                const res = await apiLogin(phone);
+                if (res.data && res.data.token) {
+                    // 记住我功能
+                    if (document.getElementById('rememberMe').checked) {
+                        localStorage.setItem('rememberMe', 'true');
+                    } else {
+                        localStorage.removeItem('rememberMe');
+                    }
+                    showToast('登录成功！正在跳转...');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }
+            } catch (err) {
+                loginError.textContent = err.message || '登录失败，请重试';
+                loginError.classList.remove('hidden');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>登录';
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            const nickname = document.getElementById('registerNickname').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const phoneError = document.getElementById('registerPhoneError');
+            const registerError = document.getElementById('registerError');
+            const registerBtn = document.getElementById('registerBtn');
+
+            // 验证
+            if (!nickname) {
+                showToast('请输入昵称');
+                return;
+            }
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                phoneError.classList.remove('hidden');
+                return;
+            }
+            phoneError.classList.add('hidden');
+            registerError.classList.add('hidden');
+
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>注册中...';
+
+            try {
+                const res = await apiRegister(nickname, phone);
+                if (res.data && res.data.token) {
+                    showToast('注册成功！正在跳转...');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }
+            } catch (err) {
+                registerError.textContent = err.message || '注册失败，请重试';
+                registerError.classList.remove('hidden');
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>注册';
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-xl shadow-lg z-50 text-sm font-medium animate-fade-in-up';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s ease'; setTimeout(() => toast.remove(), 300); }, 2000);
+        }
+
+        // 检查是否已登录
+        (async function() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    await apiGetMe();
+                    window.location.href = 'index.html';
+                } catch (e) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                }
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -34,17 +34,32 @@ let autoSaveTimer = null;
 
 // ==================== 初始化 ====================
 document.addEventListener('DOMContentLoaded', async function() {
+    // 检查是否已登录
+    const token = getToken();
+    if (!token) {
+        window.location.href = 'landing.html';
+        return;
+    }
     try {
         const authData = await apiAutoLogin();
         if (!authData || !authData.token) {
             console.error('自动登录失败');
-            showToast('登录失败，请刷新重试');
+            window.location.href = 'landing.html';
             return;
+        }
+        // 更新用户头像
+        const user = getUser();
+        if (user) {
+            const avatar = document.getElementById('userAvatar');
+            if (avatar) {
+                const initial = (user.nickname || user.openid || 'U').charAt(0).toUpperCase();
+                avatar.textContent = initial;
+            }
         }
         await loadAllData();
     } catch (err) {
         console.error('初始化失败:', err);
-        showToast('初始化失败: ' + err.message);
+        window.location.href = 'landing.html';
     }
     initResizer();
 });
@@ -1198,4 +1213,14 @@ function showToast(message) {
     toast.textContent = message;
     document.body.appendChild(toast);
     setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s ease'; setTimeout(() => toast.remove(), 300); }, 2000);
+}
+
+// ==================== 退出登录 ====================
+function handleLogout() {
+    if (!confirm('确定要退出登录吗？')) return;
+    clearAuth();
+    showToast('已退出登录');
+    setTimeout(() => {
+        window.location.href = 'landing.html';
+    }, 500);
 }
