@@ -43,7 +43,7 @@
                     <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
                         <i class="fas fa-bell text-sm"></i>
                     </div>
-                    <div class="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-xs font-bold cursor-pointer" id="userAvatar">T</div>
+                    <div class="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-xs font-bold cursor-pointer hover:ring-2 hover:ring-white/50 transition-all" id="userAvatar" onclick="openProfile()">T</div>
                     <button type="button" onclick="handleLogout()" class="px-3 py-1.5 text-xs font-medium bg-white/20 hover:bg-white/30 rounded-lg transition-colors" title="退出登录">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
@@ -116,6 +116,302 @@
                 </main>
             </div>
 
+            <!-- 个人信息页面 -->
+            <div id="profilePage" class="page-view hidden">
+                <div class="profile-wrapper">
+                    <div class="profile-sidebar">
+                        <div class="sidebar-header">
+                            <button type="button" onclick="closeProfile()" class="sidebar-back-btn">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="sidebar-user-card">
+                            <div class="user-avatar-wrapper">
+                                <div class="user-avatar" id="profileAvatar">T</div>
+                                <label class="avatar-edit-btn" for="avatarInput">
+                                    <i class="fas fa-camera"></i>
+                                </label>
+                                <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+                            </div>
+                            <h3 class="user-name" id="profileName">用户昵称</h3>
+                            <p class="user-username" id="profileUsername">@username</p>
+                        </div>
+
+                        <nav class="sidebar-nav">
+                            <button class="nav-item active" onclick="switchProfileTab('profile')">
+                                <i class="fas fa-user"></i>
+                                <span>个人资料</span>
+                            </button>
+                            <button class="nav-item" onclick="switchProfileTab('security')">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>账号安全</span>
+                            </button>
+                            <button class="nav-item" onclick="switchProfileTab('preferences')">
+                                <i class="fas fa-cog"></i>
+                                <span>偏好设置</span>
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div class="profile-main">
+                        <div class="main-header">
+                            <h1 class="page-title">个人信息</h1>
+                            <button type="button" onclick="saveProfile()" class="btn-primary btn-save">
+                                <i class="fas fa-save mr-2"></i>保存更改
+                            </button>
+                        </div>
+
+                        <div class="tab-content" id="tabProfile">
+                            <div class="section-card">
+                                <div class="section-header">
+                                    <h2 class="section-title"><i class="fas fa-user-circle mr-3 text-primary"></i>基本信息</h2>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">昵称</label>
+                                            <input type="text" id="editNickname" class="form-input" placeholder="请输入昵称">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">用户名</label>
+                                            <input type="text" id="editUsername" class="form-input" placeholder="请输入用户名" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">手机号</label>
+                                            <input type="tel" id="editPhone" class="form-input" placeholder="请输入手机号">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">邮箱</label>
+                                            <input type="email" id="editEmail" class="form-input" placeholder="请输入邮箱">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">个人简介</label>
+                                        <textarea id="editBio" class="form-textarea" rows="4" placeholder="介绍一下你自己..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section-card">
+                                <div class="section-header">
+                                    <h2 class="section-title"><i class="fas fa-map-pin mr-3 text-secondary"></i>位置信息</h2>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">所在城市</label>
+                                            <input type="text" id="editCity" class="form-input" placeholder="请输入所在城市">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">常住地址</label>
+                                            <input type="text" id="editAddress" class="form-input" placeholder="请输入详细地址">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content hidden" id="tabSecurity">
+                            <div class="section-card">
+                                <div class="section-header">
+                                    <h2 class="section-title"><i class="fas fa-lock mr-3 text-coral"></i>账号安全</h2>
+                                </div>
+                                <div class="section-body">
+                                    <div class="security-section">
+                                        <button class="security-item" onclick="showChangePassword()">
+                                            <div class="security-icon-wrapper bg-blue-500">
+                                                <i class="fas fa-key"></i>
+                                            </div>
+                                            <div class="security-content">
+                                                <h4>修改密码</h4>
+                                                <p>定期更改密码保障账号安全</p>
+                                            </div>
+                                            <div class="security-arrow">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </div>
+                                        </button>
+                                        <button class="security-item">
+                                            <div class="security-icon-wrapper bg-purple-500">
+                                                <i class="fas fa-mobile-alt"></i>
+                                            </div>
+                                            <div class="security-content">
+                                                <h4>绑定手机号</h4>
+                                                <p>当前未绑定</p>
+                                            </div>
+                                            <div class="security-arrow">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </div>
+                                        </button>
+                                        <button class="security-item">
+                                            <div class="security-icon-wrapper bg-green-500">
+                                                <i class="fas fa-envelope"></i>
+                                            </div>
+                                            <div class="security-content">
+                                                <h4>绑定邮箱</h4>
+                                                <p>当前未绑定</p>
+                                            </div>
+                                            <div class="security-arrow">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </div>
+                                        </button>
+                                        <button class="security-item">
+                                            <div class="security-icon-wrapper bg-orange-500">
+                                                <i class="fas fa-history"></i>
+                                            </div>
+                                            <div class="security-content">
+                                                <h4>登录记录</h4>
+                                                <p>查看最近的登录活动</p>
+                                            </div>
+                                            <div class="security-arrow">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content hidden" id="tabPreferences">
+                            <div class="section-card">
+                                <div class="section-header">
+                                    <h2 class="section-title"><i class="fas fa-palette mr-3 text-sunset"></i>外观设置</h2>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-group">
+                                        <label class="form-label">主题模式</label>
+                                        <div class="theme-selector">
+                                            <button class="theme-option active" data-theme="light">
+                                                <div class="theme-preview light-preview"></div>
+                                                <span>浅色模式</span>
+                                            </button>
+                                            <button class="theme-option" data-theme="dark">
+                                                <div class="theme-preview dark-preview"></div>
+                                                <span>深色模式</span>
+                                            </button>
+                                            <button class="theme-option" data-theme="auto">
+                                                <div class="theme-preview auto-preview"></div>
+                                                <span>跟随系统</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section-card">
+                                <div class="section-header">
+                                    <h2 class="section-title"><i class="fas fa-bell mr-3 text-primary"></i>通知设置</h2>
+                                </div>
+                                <div class="section-body">
+                                    <div class="notification-item">
+                                        <div class="notification-info">
+                                            <h4>行程提醒</h4>
+                                            <p>接收旅行计划的时间提醒</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="notification-item">
+                                        <div class="notification-info">
+                                            <h4>活动通知</h4>
+                                            <p>接收系统活动和更新通知</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="notification-item">
+                                        <div class="notification-info">
+                                            <h4>邮件通知</h4>
+                                            <p>通过邮件接收重要通知</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-sidebar-right">
+                        <div class="stats-card">
+                            <div class="stats-header">
+                                <h3><i class="fas fa-bar-chart mr-2 text-forest"></i>我的数据</h3>
+                            </div>
+                            <div class="stats-content">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-blue-500">
+                                        <i class="fas fa-route"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-num" id="statPlans">0</div>
+                                        <div class="stat-text">旅行计划</div>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-green-500">
+                                        <i class="fas fa-map-pin"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-num" id="statCheckins">0</div>
+                                        <div class="stat-text">打卡记录</div>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-orange-500">
+                                        <i class="fas fa-utensils"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-num" id="statFoods">0</div>
+                                        <div class="stat-text">美食收录</div>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-purple-500">
+                                        <i class="fas fa-wallet"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-num" id="statExpenses">0</div>
+                                        <div class="stat-text">费用记录</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions-card">
+                            <div class="quick-header">
+                                <h3><i class="fas fa-zap mr-2 text-accent"></i>快捷操作</h3>
+                            </div>
+                            <div class="quick-actions">
+                                <button class="quick-btn" onclick="navigateToNewPlan()">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>新建计划</span>
+                                </button>
+                                <button class="quick-btn" onclick="exportData()">
+                                    <i class="fas fa-download"></i>
+                                    <span>导出数据</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="tips-card">
+                            <div class="tips-header">
+                                <i class="fas fa-lightbulb text-accent"></i>
+                                <span>小贴士</span>
+                            </div>
+                            <p class="tips-content">完善个人资料可以获得更好的个性化推荐体验哦！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 编辑页面：左侧编辑区 + 右侧侧边栏 -->
             <div id="editorPage" class="page-view hidden">
                 <div class="main-content" id="editorMainContent">
@@ -154,12 +450,12 @@
                                         <div class="route-planner">
                                             <div class="route-header">
                                                 <h3 class="font-bold text-gray-800"><i class="fas fa-route mr-2 text-primary"></i>路线规划</h3>
-                                                <button type="button" onclick="addSpot()" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加景点</button>
+                                                <button type="button" onclick="event.stopPropagation(); event.preventDefault(); addSpot();" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加景点</button>
                                             </div>
                                             <div class="route-input-area">
                                                 <div class="flex gap-2">
                                                     <input type="text" id="spotSearchInput" placeholder="搜索或输入景点名称..." class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" onkeydown="if(event.key==='Enter'){event.preventDefault(); addSpot();}">
-                                                    <button type="button" onclick="addSpot()" class="btn-primary text-sm">添加</button>
+                                                    <button type="button" onclick="event.stopPropagation(); event.preventDefault(); addSpot();" class="btn-primary text-sm">添加</button>
                                                 </div>
                                             </div>
                                             <div class="route-list" id="routeList"></div>
@@ -172,7 +468,7 @@
                                         <div class="schedule-planner">
                                             <div class="schedule-header">
                                                 <h3 class="font-bold text-gray-800"><i class="fas fa-calendar-alt mr-2 text-secondary"></i>时间安排</h3>
-                                                <button type="button" onclick="openModal('schedule')" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加活动</button>
+                                                <button type="button" onclick="event.stopPropagation(); event.preventDefault(); openModal('schedule');" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加活动</button>
                                             </div>
                                             <div class="schedule-date-nav">
                                                 <button type="button" onclick="changeScheduleDate(-1)" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200"><i class="fas fa-chevron-left text-gray-500 text-xs"></i></button>
@@ -191,7 +487,7 @@
                                 <div class="spots-editor">
                                     <div class="spots-header">
                                         <h3 class="font-bold text-gray-800">景点介绍</h3>
-                                        <button type="button" onclick="addSpotDetail()" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加景点</button>
+                                        <button type="button" onclick="event.stopPropagation(); event.preventDefault(); addSpotDetail();" class="btn-primary text-sm py-1.5 px-3"><i class="fas fa-plus mr-1"></i>添加景点</button>
                                     </div>
                                     <div class="spots-card-grid" id="spotsCardGrid">
                                         <!-- 景点卡片由JS动态生成 -->
@@ -205,21 +501,21 @@
                                     <div class="detail-section">
                                         <div class="detail-section-header">
                                             <h3 class="font-bold text-gray-800"><i class="fas fa-car mr-2 text-primary"></i>交通方式</h3>
-                                            <button type="button" onclick="openModal('transport')" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
+                                            <button type="button" onclick="event.stopPropagation(); event.preventDefault(); openModal('transport');" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
                                         </div>
                                         <div class="detail-section-content"><div class="transport-list" id="transportList"></div></div>
                                     </div>
                                     <div class="detail-section">
                                         <div class="detail-section-header">
                                             <h3 class="font-bold text-gray-800"><i class="fas fa-hotel mr-2 text-secondary"></i>住宿信息</h3>
-                                            <button type="button" onclick="openModal('accommodation')" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
+                                            <button type="button" onclick="event.stopPropagation(); event.preventDefault(); openModal('accommodation');" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
                                         </div>
                                         <div class="detail-section-content"><div class="accommodation-list" id="accommodationList"></div></div>
                                     </div>
                                     <div class="detail-section">
                                         <div class="detail-section-header">
                                             <h3 class="font-bold text-gray-800"><i class="fas fa-wallet mr-2 text-sunset"></i>预算管理</h3>
-                                            <button type="button" onclick="openModal('expense')" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加费用</button>
+                                            <button type="button" onclick="event.stopPropagation(); event.preventDefault(); openModal('expense');" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加费用</button>
                                         </div>
                                         <div class="detail-section-content">
                                             <div class="budget-summary" id="budgetSummary"></div>
@@ -229,7 +525,7 @@
                                     <div class="detail-section">
                                         <div class="detail-section-header">
                                             <h3 class="font-bold text-gray-800"><i class="fas fa-sticky-note mr-2 text-forest"></i>笔记与待办</h3>
-                                            <button type="button" onclick="openModal('todo')" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
+                                            <button type="button" onclick="event.stopPropagation(); event.preventDefault(); openModal('todo');" class="text-sm text-primary hover:underline"><i class="fas fa-plus mr-1"></i>添加</button>
                                         </div>
                                         <div class="detail-section-content">
                                             <div class="todo-list" id="todoList"></div>
@@ -260,7 +556,7 @@
                                     <span class="filter-chip active" onclick="filterCheckins('all', this)">全部</span>
                                     <span class="filter-chip" onclick="filterCheckins('image', this)">有图</span>
                                 </div>
-                                <button type="button" onclick="openModal('checkin')" class="sidebar-add-btn"><i class="fas fa-plus mr-1"></i>添加打卡</button>
+                                <button type="button" onclick="event.stopPropagation(); event.preventDefault(); openModal('checkin');" class="sidebar-add-btn"><i class="fas fa-plus mr-1"></i>添加打卡</button>
                                 <div class="checkin-timeline" id="sidebarCheckinTimeline"></div>
                             </div>
                             <div class="sidebar-panel-content" id="sidebarFoods">
@@ -270,7 +566,7 @@
                                     <span class="filter-chip" onclick="filterFoods('snack', this)">小吃</span>
                                     <span class="filter-chip" onclick="filterFoods('restaurant', this)">餐厅</span>
                                 </div>
-                                <button type="button" onclick="openModal('food')" class="sidebar-add-btn" style="background: linear-gradient(135deg, #F97316, #F59E0B);"><i class="fas fa-plus mr-1"></i>添加美食</button>
+                                <button type="button" onclick="event.stopPropagation(); event.preventDefault(); openModal('food');" class="sidebar-add-btn" style="background: linear-gradient(135deg, #F97316, #F59E0B);"><i class="fas fa-plus mr-1"></i>添加美食</button>
                                 <div class="sidebar-food-list" id="sidebarFoodList"></div>
                             </div>
                             <div class="sidebar-panel-content" id="sidebarMap">
@@ -468,6 +764,39 @@
                     <div><label class="block text-sm font-medium text-gray-700 mb-1.5">待办内容</label><textarea id="todoText" required rows="4" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest/20 focus:border-forest outline-none text-sm resize-none" placeholder="例如：预订返程车票"></textarea></div>
                 </div>
                 <div class="flex gap-3 mt-6"><button type="button" onclick="closeModal('todo')" class="btn-secondary flex-1">取消</button><button type="submit" class="btn-primary flex-1" style="background:linear-gradient(135deg,#10B981,#34D399)">保存</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 修改密码弹窗 -->
+    <div class="modal-overlay" id="changePasswordModal">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-gray-800">修改密码</h3>
+                <button type="button" onclick="closeModal('changePassword')" class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-times text-gray-500"></i>
+                </button>
+            </div>
+            <form id="changePasswordForm" onsubmit="changePassword(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">当前密码</label>
+                        <input type="password" id="currentPassword" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="请输入当前密码">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">新密码</label>
+                        <input type="password" id="newPassword" required minlength="6" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="请输入新密码（至少6位）">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">确认新密码</label>
+                        <input type="password" id="confirmPassword" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" placeholder="请再次输入新密码">
+                    </div>
+                    <div id="passwordError" class="hidden p-3 bg-red-50 text-coral text-sm rounded-xl"></div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="closeModal('changePassword')" class="btn-secondary flex-1">取消</button>
+                    <button type="submit" class="btn-primary flex-1">确认修改</button>
+                </div>
             </form>
         </div>
     </div>

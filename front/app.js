@@ -1237,3 +1237,171 @@ function handleLogout() {
         window.location.href = 'landing.html';
     }, 500);
 }
+
+// ==================== 个人信息页面 ====================
+let currentUser = null;
+
+async function openProfile() {
+    document.getElementById('mainPage').classList.add('hidden');
+    document.getElementById('editorPage').classList.add('hidden');
+    document.getElementById('profilePage').classList.remove('hidden');
+    await loadProfile();
+}
+
+function closeProfile() {
+    document.getElementById('profilePage').classList.add('hidden');
+    document.getElementById('mainPage').classList.remove('hidden');
+}
+
+function switchProfileTab(tabName) {
+    document.querySelectorAll('.nav-item').forEach(tab => tab.classList.remove('active'));
+    document.querySelector(`.nav-item[onclick="switchProfileTab('${tabName}')"]`).classList.add('active');
+    
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.remove('hidden');
+}
+
+async function loadProfile() {
+    try {
+        const res = await apiGetMe();
+        if (res.data) {
+            currentUser = res.data;
+            const initial = (currentUser.nickname || currentUser.username || 'U').charAt(0).toUpperCase();
+            document.getElementById('profileAvatar').textContent = initial;
+            document.getElementById('profileName').textContent = currentUser.nickname || currentUser.username || '用户';
+            document.getElementById('profileUsername').textContent = '@' + (currentUser.username || 'user');
+            document.getElementById('editNickname').value = currentUser.nickname || '';
+            document.getElementById('editUsername').value = currentUser.username || '';
+            document.getElementById('editPhone').value = currentUser.phone || '';
+            document.getElementById('editEmail').value = currentUser.email || '';
+            document.getElementById('editBio').value = currentUser.bio || '';
+            document.getElementById('editCity').value = currentUser.city || '';
+            document.getElementById('editAddress').value = currentUser.address || '';
+
+            document.getElementById('statPlans').textContent = travelPlans.length || 0;
+            document.getElementById('statCheckins').textContent = checkins.length || 0;
+            document.getElementById('statFoods').textContent = foods.length || 0;
+            document.getElementById('statExpenses').textContent = expenses.length || 0;
+        }
+    } catch (err) {
+        console.error('加载个人信息失败:', err);
+        showToast('加载个人信息失败');
+    }
+}
+
+async function saveProfile() {
+    const nickname = document.getElementById('editNickname').value.trim();
+    const phone = document.getElementById('editPhone').value.trim();
+    const email = document.getElementById('editEmail').value.trim();
+    const bio = document.getElementById('editBio').value.trim();
+
+    try {
+        const data = { nickname, phone, email, bio };
+        const res = await apiUpdateMe(data);
+        if (res.data) {
+            currentUser = res.data;
+            document.getElementById('profileName').textContent = currentUser.nickname || currentUser.username || '用户';
+            document.getElementById('userAvatar').textContent = (currentUser.nickname || currentUser.username || 'U').charAt(0).toUpperCase();
+            showToast('个人信息已更新');
+        }
+    } catch (err) {
+        console.error('更新个人信息失败:', err);
+        showToast('更新失败: ' + err.message);
+    }
+}
+
+function handleAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const avatarUrl = e.target.result;
+        try {
+            await apiUploadAvatar(avatarUrl);
+            showToast('头像上传成功');
+        } catch (err) {
+            console.error('上传头像失败:', err);
+            showToast('上传失败: ' + err.message);
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+function showChangePassword() {
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    document.getElementById('passwordError').classList.add('hidden');
+    openModal('changePassword');
+}
+
+async function changePassword(event) {
+    event.preventDefault();
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const errorDiv = document.getElementById('passwordError');
+
+    errorDiv.classList.add('hidden');
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        errorDiv.textContent = '请填写所有字段';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        errorDiv.textContent = '新密码至少需要6位';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        errorDiv.textContent = '两次输入的密码不一致';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        const res = await apiChangePassword(currentPassword, newPassword);
+        if (res.data) {
+            closeModal('changePassword');
+            showToast('密码修改成功，请重新登录');
+            setTimeout(() => {
+                handleLogout();
+            }, 1500);
+        }
+    } catch (err) {
+        errorDiv.textContent = err.message || '修改密码失败';
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+function navigateToNewPlan() {
+    closeProfile();
+    setTimeout(() => {
+        openModal('travel');
+    }, 300);
+}
+
+function exportData() {
+    const exportData = {
+        plans: travelPlans,
+        checkins: checkins,
+        foods: foods,
+        expenses: expenses,
+        exportsAt: new Date().toISOString()
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `travel-assistant-data-${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('数据导出成功');
+}

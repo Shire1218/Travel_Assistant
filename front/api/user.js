@@ -15,3 +15,10 @@ async function apiUploadAvatar(avatarUrl) {
         body: JSON.stringify({ avatarUrl }),
     });
 }
+
+async function apiChangePassword(currentPassword, newPassword) {
+    return request('/users/change-password', {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword, newPassword }),
+    });
+}
