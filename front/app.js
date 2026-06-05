@@ -34,9 +34,11 @@ let autoSaveTimer = null;
 
 // ==================== 初始化 ====================
 document.addEventListener('DOMContentLoaded', async function() {
+    console.log('页面初始化开始');
     // 检查是否已登录
     const token = getToken();
     if (!token) {
+        console.log('未登录，跳转到 landing.html');
         window.location.href = 'landing.html';
         return;
     }
@@ -47,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             window.location.href = 'landing.html';
             return;
         }
+        console.log('登录成功，开始加载数据');
         // 更新用户头像
         const user = getUser();
         if (user) {
@@ -57,6 +60,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
         await loadAllData();
+        console.log('页面初始化完成');
     } catch (err) {
         console.error('初始化失败:', err);
         window.location.href = 'landing.html';
@@ -178,6 +182,7 @@ function updateStats() {
 
 // ==================== 页面导航 ====================
 function navigateToDetail(planId) {
+    console.log('navigateToDetail 被调用，planId:', planId);
     currentPlanId = planId;
     const plan = travelPlans.find(p => p.id === planId);
     if (!plan) {
@@ -192,6 +197,7 @@ function navigateToDetail(planId) {
 
     document.getElementById('mainPage').classList.add('hidden');
     document.getElementById('editorPage').classList.remove('hidden');
+    console.log('页面已切换到编辑页面');
 
     loadPlanDetail(planId).catch(err => {
         console.error('加载计划详情失败:', err);
@@ -202,6 +208,7 @@ function navigateToDetail(planId) {
 }
 
 function goBack() {
+    console.log('goBack 被调用，调用堆栈:', new Error().stack);
     document.getElementById('editorPage').classList.add('hidden');
     document.getElementById('mainPage').classList.remove('hidden');
     currentPlanId = null;
@@ -287,18 +294,24 @@ function renderRouteList() {
 }
 
 function addSpot() {
+    console.log('addSpot 被调用，currentPlanId:', currentPlanId);
     const input = document.getElementById('spotSearchInput');
     const name = input.value.trim();
     if (!name) { showToast('请输入景点名称'); return; }
     const spotData = { name, distanceKm: 0, durationMin: 0 };
     apiAddRouteSpot(currentPlanId, spotData).then((res) => {
+        console.log('addSpot 成功，res:', res);
         if (res.data) {
             routeSpots.push({ id: res.data.id, travelPlanId: currentPlanId, name, order: res.data.displayOrder, distance: res.data.distanceKm, duration: res.data.durationMin });
         }
         input.value = '';
         renderRouteList();
         showToast('景点已添加');
-    }).catch(err => showToast('添加失败: ' + err.message));
+    }).catch(err => {
+        console.error('addSpot 失败:', err);
+        showToast('添加失败: ' + err.message);
+    });
+    return false;
 }
 
 function deleteSpot(id) {
@@ -1223,51 +1236,4 @@ function handleLogout() {
     setTimeout(() => {
         window.location.href = 'landing.html';
     }, 500);
-}
-
-// ==================== 个人信息页面 ====================
-function showProfilePage() {
-    document.getElementById('mainPage').classList.add('hidden');
-    document.getElementById('editorPage').classList.add('hidden');
-    document.getElementById('profilePage').classList.remove('hidden');
-    loadProfile();
-}
-
-function goBackToMain() {
-    document.getElementById('profilePage').classList.add('hidden');
-    document.getElementById('mainPage').classList.remove('hidden');
-}
-
-async function loadProfile() {
-    try {
-        const res = await apiGetMe();
-        if (res.data) {
-            const user = res.data;
-            const firstChar = (user.nickname || user.username || '?').charAt(0).toUpperCase();
-
-            document.getElementById('profileAvatar').textContent = firstChar;
-            document.getElementById('profileNickname').textContent = user.nickname || '-';
-            document.getElementById('profileUsername').textContent = '@' + (user.username || '');
-            document.getElementById('profileAccount').textContent = user.username || '-';
-            document.getElementById('profileDisplayName').textContent = user.nickname || '-';
-            document.getElementById('profileEmail').textContent = user.email || '未设置';
-            document.getElementById('profilePhone').textContent = user.phone || '未设置';
-
-            const genderMap = { 0: '未设置', 1: '男', 2: '女' };
-            document.getElementById('profileGender').textContent = genderMap[user.gender] || '未设置';
-
-            if (user.createdAt) {
-                const date = new Date(user.createdAt);
-                document.getElementById('profileCreatedAt').textContent = date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
-            } else {
-                document.getElementById('profileCreatedAt').textContent = '-';
-            }
-
-            const avatar = document.getElementById('userAvatar');
-            avatar.textContent = firstChar;
-        }
-    } catch (err) {
-        console.error('加载个人信息失败:', err);
-        showToast('加载个人信息失败');
-    }
 }
